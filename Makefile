@@ -245,10 +245,25 @@ ifneq (,$(findstring xcore,$(CAPSTONE_ARCHS)))
 	LIBOBJ_XCORE += $(OBJDIR)/arch/XCore/XCoreModule.o
 endif
 
+DEP_TRICORE =
+DEP_TRICORE += arch/TriCore/TriCoreGenAsmWriter.inc
+DEP_TRICORE += arch/TriCore/TriCoreGenInstrInfo.inc
+DEP_TRICORE += arch/TriCore/TriCoreGenDisassemblerTables.inc
+DEP_TRICORE += arch/TriCore/TriCoreGenRegisterInfo.inc
+
+LIBOBJ_TRICORE =
+ifneq (,$(findstring tricore,$(CAPSTONE_ARCHS)))
+	CFLAGS += -DCAPSTONE_HAS_TRICORE
+	LIBOBJ_TRICORE += $(OBJDIR)/arch/TriCore/TriCoreDisassembler.o
+	LIBOBJ_TRICORE += $(OBJDIR)/arch/TriCore/TriCoreInstPrinter.o
+	LIBOBJ_TRICORE += $(OBJDIR)/arch/TriCore/TriCoreMapping.o
+	LIBOBJ_TRICORE += $(OBJDIR)/arch/TriCore/TriCoreModule.o
+endif
+
 
 LIBOBJ =
 LIBOBJ += $(OBJDIR)/cs.o $(OBJDIR)/utils.o $(OBJDIR)/SStream.o $(OBJDIR)/MCInstrDesc.o $(OBJDIR)/MCRegisterInfo.o
-LIBOBJ += $(LIBOBJ_ARM) $(LIBOBJ_ARM64) $(LIBOBJ_MIPS) $(LIBOBJ_PPC) $(LIBOBJ_SPARC) $(LIBOBJ_SYSZ) $(LIBOBJ_X86) $(LIBOBJ_XCORE)
+LIBOBJ += $(LIBOBJ_ARM) $(LIBOBJ_ARM64) $(LIBOBJ_MIPS) $(LIBOBJ_PPC) $(LIBOBJ_SPARC) $(LIBOBJ_SYSZ) $(LIBOBJ_X86) $(LIBOBJ_XCORE) $(LIBOBJ_TRICORE)
 LIBOBJ += $(OBJDIR)/MCInst.o
 
 
@@ -356,6 +371,7 @@ $(LIBOBJ_SPARC): $(DEP_SPARC)
 $(LIBOBJ_SYSZ): $(DEP_SYSZ)
 $(LIBOBJ_X86): $(DEP_X86)
 $(LIBOBJ_XCORE): $(DEP_XCORE)
+$(LIBOBJ_TRICORE): $(DEP_TRICORE)
 
 ifeq ($(CAPSTONE_STATIC),yes)
 $(ARCHIVE): $(LIBOBJ)
